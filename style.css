@@ -360,6 +360,30 @@
     from {transform: scale(0)}
     to {transform: scale(1)}
   }
+  .sub-container {
+    max-width: 1300px;
+    margin: 150px;
+    padding-left: 25px;
+    padding-right: 25px;
+    display: flex;
+    justify-content: space-between;
+    gap: 120px;
+  }
+  .sub-detail {
+    background-color: #abcdef98;
+    outline-style: solid;
+    outline-color: #ff523b;
+    border-radius: 30px;
+    height: 40%px;
+    width: 30%;
+    text-align: center;
+    padding: 40px;
+    cursor: pointer;
+  }
+  #price {
+    color: #000;
+    font-weight: bold;
+  }
   
   /* ----------------media query for menu---------------- */
   @media only screen and (max-width: 800px) {
