@@ -1,0 +1,566 @@
+<?php
+#<!DOCTYPE html>
+include "dbconfig.php";
+#dbconfig.php allows the neccessary information to login to the db without hardcoding it into each php file.
+#include "dbconfig.php";
+$con = mysqli_connect($host,$username, $password, $dbname);
+
+echo"<html lang='en'>\n";  
+echo"
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>BookWorm! | Online Bookstore</title>
+    <link rel='stylesheet' href='style.css' />
+    <link rel='preconnect' href='https://fonts.gstatic.com' />
+    <link
+      href='https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,400;1,500;1,600&display=swap'
+      rel='stylesheet'
+    />
+    <link
+      rel='stylesheet'
+      href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
+    />
+    <script src='https://kit.fontawesome.com/2496949d98.js' crossorigin='anonymous'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+    <script src='script.js'></script>
+  </head>
+
+  <body>
+    <!------------------ Header ------------------>
+    <div class='header'>
+      <div class='container'>
+        <div class='navbar'>
+          <div class='logo'>
+            <a href='index.php'>
+              <img src='images/BookWormLogo.gif' alt='BookWorm-Logo' height='150' width='150'></img>
+            </a>
+          </div>
+          <!----------  Nav Bar ------------------>
+          <nav>
+            <ul id='MenuItems'>
+              <li><a href='index.php'>Home</a></li>
+              <li><a href='ebooks.php'>Books</a></li>
+              <li><a href='subscription.php'>BookWorm Pro</a></li>
+              <li><a href=''>About</a></li>
+              <li><a href=''>Contact</a></li>
+              <li><a id='signIn' class='btn' href='javascript:void(0)'>Sign In</a></li>
+            </ul>
+          </nav>
+          <a href='cart.php'>
+            <i id='cartIcon' class='fa-solid fa-cart-shopping'></i>
+          </a>
+          <span class='badge' id='cartCount'>1</span>
+          <img src='images/menu.png' class='menu-icon' onclick='menutoggle()' />
+        </div>
+        <div class='row'>
+          <div class='col-2'>
+            <h1>
+              BookWorm!<br />
+              The Online Bookstore
+            </h1>
+            <p>
+              A Better Way to Buy Books Online!<br />
+              
+            </p>
+            <a href='ebooks.html' class='btn'>Explore Now &#x27F6;</a>
+          </div>
+          <div class='col-2'>
+            <img src='images/Header.png' alt='Header Pic' />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Login modal-->
+    <div id='loginModal' class='modal'>
+      <form class='modal-login animate' action='javascript:void(0)' method='post'>
+        <div class='login-container'>
+          <span onclick='document.getElementById('loginModal').style.display='none'' class='close' title='Close Modal'>&times;</span>
+          <br>
+          <label for='email'><b>Email</b></label>
+          <input type='email' placeholder='Enter Email' id='email' required>
+
+          <label for='password'><b>Password</b></label>
+          <input type='password' placeholder='Enter Password' id='password' required>
+
+          <button id='loginbtn' class='btn loginbtn' type='submit'>Login</button>
+        </div>
+      </form>
+    </div> ";
+
+
+echo"<!----------------featured categories -------------------->";
+#SQL query that will retrieve the data from dB
+$sql = " SELECT barcode, image FROM bookwormdb.books ORDER BY rand() LIMIT 3";
+$result = mysqli_query($con, $sql);
+
+if($result) {
+  echo "<div class='categories'>
+      <div class='small-container'>
+        <div class='row'>";
+  $count = 1;
+  while($row = mysqli_fetch_array($result)){
+    $barcode = $row['barcode'];
+    $image = $row['image'];
+
+
+#echo"<img src='data:image/jpeg;base64,".base64_encode($img)."'/>";
+    
+    if ($barcode <>"") {
+      echo" <div class='col-3'>
+            <img src='data:image/jpeg;base64,".base64_encode($image)."' alt='Book ".$count."' />
+          </div>
+          ";
+    }
+    $count = $count +1;
+}
+  echo "</div>";
+}
+
+
+  /*  <div class="categories">
+      <div class="small-container">
+        <div class="row">
+          
+
+
+          <div class="col-3">
+            <img src="images/Book1.jpeg" alt="Book 1" />
+          </div>
+          <div class="col-3">
+            <img src="images/Book2.webp" alt="Book 2" />
+          </div>
+          <div class="col-3">
+            <img src="images/Book3.jpeg" alt="Book 3" />
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>*/
+
+
+echo" <!----------------Featured Books -------------------->";
+#SQL query that will retrieve the data from dB
+$sql2 = " SELECT barcode, image, title, rating, price FROM bookwormdb.books ORDER BY rand() DESC LIMIT 8";
+$result2 = mysqli_query($con, $sql2);
+
+if($result2) {
+  echo "<div class='small-container'>
+      <h2 class='title'>Featured Books</h2>
+      <div class='row'>
+        ";
+  #$count = 1;
+  while($row = mysqli_fetch_array($result2)){
+    $barcode = $row['barcode'];
+    $image = $row['image'];
+    $title = $row['title'];
+    $rating = $row['rating'];
+    $price = $row['price'];
+
+
+#echo"<img src='data:image/jpeg;base64,".base64_encode($img)."'/>";
+    
+    if($barcode <>"") {
+      echo" <div class='col-4'>
+          <a href='book-detail.php?barcode=".$barcode."'>
+            <img src='data:image/jpeg;base64,".base64_encode($image)."' alt='Book ".$count."'/></a>
+          <a href='book-detail.php?barcode=".$barcode."'> <h4>".$title."</h4></a> "; 
+      #Rating
+       echo"<div class='rating'>";
+        for($x = 0; $x < 5; $x++){
+          if (floor($rating/2)-$x>=1 )
+            {echo"<i class='fa fa-star'></i>";}
+          elseif (($rating/2)-$x > 0) 
+            {echo"<i class='fa fa-star-half-o'></i>";  }
+          else
+            {echo"<i class='fa fa-star-o'></i>";}
+        }
+        echo"</div>";
+        echo"<p>$".$price."</p>";
+
+
+      echo"</div>";
+    }
+    $count = $count +1;
+}
+  echo " </div>
+    </div>";
+}
+
+
+
+   /* <div class="small-container">
+      <h2 class="title">Featured Titles</h2>
+      <div class="row">
+
+
+        <div class="col-4">
+          <a href="book-detail.html">
+            <img src="images/Book4.jpeg" alt="Book 4"
+          /></a>
+          <a href="book-detail.html"> <h4>Later</h4></a>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$9.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book5.jpeg" alt="Book 5" />
+          <h4>March: Book One</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+           
+          </div>
+          <p>$19.75</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book6.jpeg" alt="Book 6" />
+          <h4>Will</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+          </div>
+          <p>$14.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book7.jpeg" alt="Book 7" />
+          <h4>The Hunger Games</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$7.99</p>
+        </div>
+      </div>*/
+
+echo" <!---------------- Featured Author Stephen King -------------------->";
+#SQL query that will retrieve the data from dB
+$sql3 = " SELECT barcode, image, title, rating, price, author FROM bookwormdb.books WHERE author = 'Stephen King' ORDER BY title, price DESC LIMIT 4";
+$result3 = mysqli_query($con, $sql3);
+
+if($result2) {
+  echo "<div class='small-container'>
+      <h2 class='title'>Featured Author: Stephen King</h2>
+      <div class='row'>
+        ";
+  #$count = 1;
+  while($row = mysqli_fetch_array($result3)){
+    $barcode = $row['barcode'];
+    $image = $row['image'];
+    $title = $row['title'];
+    $rating = $row['rating'];
+    $price = $row['price'];
+
+
+#echo"<img src='data:image/jpeg;base64,".base64_encode($img)."'/>";
+    
+    if($barcode <>"") {
+      echo" <div class='col-4'>
+          <a href='book-detail.php?barcode=".$barcode."' method = 'post'>
+            <img src='data:image/jpeg;base64,".base64_encode($image)."' alt='Book ".$count."'/></a>
+          <a href='book-detail.php=".$barcode."' method = 'post'> <h4 >".$title."</h4></a> "; 
+      #Rating
+       echo"<div class='rating'>";
+        for($x = 0; $x < 5; $x++){
+          if (floor($rating/2)-$x>=1 )
+            {echo"<i class='fa fa-star'></i>";}
+          elseif (($rating/2)-$x > 0) 
+            {echo"<i class='fa fa-star-half-o'></i>";  }
+          else
+            {echo"<i class='fa fa-star-o'></i>";}
+        }
+        echo"</div>";
+        echo"<p>$".$price."</p>";
+
+
+      echo"</div>";
+    }
+    $count = $count +1;
+}
+  echo " </div>
+        </div>
+    </div>";
+}
+
+
+
+      /*<h2 class="title">Bestsellers</h2>
+      <div class="row">
+        <div class="col-4">
+          <img src="images/Book8.jpeg" alt="Book 8" />
+          <h4>The Paris Apartment</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$15.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book9.jpeg" alt="Book 9" />
+          <h4>Educated</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$12.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book10.jpeg" alt="Book 10" />
+          <h4>Other People's Clothes</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+          </div>
+          <p>$13.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book11.jpeg" alt="Book 11" />
+          <h4>One by One</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$13.95</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <img src="images/Book12.jpeg" alt="Book 12" />
+          <h4>The Dark Queens: The Bloody Rivalry That Forged the Medieval World</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$9.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book13.jpeg" alt="Book 13" />
+          <h4>Fox and I: An Uncommon Friendship</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$14.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book14.jpeg" alt="Book 14" />
+          <h4>Missing: A Memoir</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+          </div>
+          <p>$8.99</p>
+        </div>
+        <div class="col-4">
+          <img src="images/Book15.jpeg" alt="Book 15" />
+          <h4>The Alchemist</h4>
+          <div class="rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-o"></i>
+          </div>
+          <p>$10.95</p>
+        </div>
+      </div>
+    </div>
+*/
+ echo "   
+    <!------------------offer ------------>
+    <div class='offer'>
+      <div class='small-container'>
+        <div class='row'>
+          <div class='col-2'>
+            <img src='images/Offer.jpeg' class='offer-img' />
+          </div>
+          <div class='col-2'>
+            <p>Exclusively on BookWorm!</p>
+            <br />
+            <h2>The Tobacco Wives</h2>
+            <br />
+            <small>
+                Shedding light on the hidden history of women’s 
+                activism during the post-war period, at its heart, 
+                The Tobacco Wives is a deeply human, emotionally satisfying, 
+                and dramatic novel about the power of female connection and 
+                the importance of seeking truth.
+            </small>
+            <a href='#' class='btn'>Buy Now &#8594;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ---------------testimonial-------------------->
+    <div class='testimonial'>
+      <div class='small-container'>
+        <div div class='row'>
+          <div class='col-3'>
+            <i class='fa fa-quote-left'></i>
+            <p>
+              A beautifully rendered portrait of a young woman finding her courage and her voice.
+            </p>
+            <div class='rating'>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star-o'></i>
+            </div>
+            <img src='images/Lisa.jpeg' alt='Lisa' />
+            <h3> - Lisa Wingate, #1 New York Times bestselling author</h3>
+          </div>
+          <div class='col-3'>
+            <i class='fa fa-quote-left'></i>
+            <p>
+              This is a story of courage, of women willing to take a stand in the face of corporate greed, and most definitely a tale for our times.
+            </p>
+            <div class='rating'>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star-o'></i>
+            </div>
+            <img src='images/Fiona.jpeg' alt='Fiona' />
+            <h3> - Fiona Davis, #1 New York Times bestselling author</h3>
+          </div>
+          <div class='col-3'>
+            <i class='fa fa-quote-left'></i>
+            <p>
+              Adele Myers brings mid-century North Carolina vividly to life in her impressive, beautifully detailed debut novel, The Tobacco Wives, a suspenseful coming-of-age story of a brave young woman’s search for dangerous truths obscured by corporate deceit and betrayal.
+            </p>
+            <div class='rating'>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star'></i>
+              <i class='fa fa-star-o'></i>
+            </div>
+            <img src='images/Jen.jpeg' alt='Jen' />
+            <h3> - Jennifer Chiaverini, #1 New York Times bestselling author</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ---------------------publishers------------------- -->
+    <div class='publishers'>
+      <div class='small-container'>
+        <div class='row'>
+          <div class='col-5'>
+            <img src='images/scholastic.jpeg' />
+          </div>
+          <div class='col-5'>
+            <img src='images/chronicle.png' />
+          </div>
+          <div class='col-5'>
+            <img src='images/candle.png' />
+          </div>
+          <div class='col-5'>
+            <img src='images/pearson.png' />
+          </div>
+          <div class='col-5'>
+            <img src='images/nyt.jpeg' />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------------footer------------------- -->
+    <div class='footer'>
+      <div class='container'>
+        <div class='row'>
+          <div class='footer-col-1'>
+            <h3>Download Our App</h3>
+            <p>Download App for Android and ios mobile phone.</p>
+            <div class='app-logo'>
+              <img src='images/Playstore.png' />
+              <img src='images/Applestore.png' />
+            </div>
+          </div>
+          <div class='footer-col-2'>
+            <img src='images/BookWormLogo.gif' alt='BookWorm-Logo' height='150' width='50'></img>
+            <p>
+              A Better Way to Buy Books Online!
+            </p>
+          </div>
+          <div class='footer-col-3'>
+            <h3>Useful Links</h3>
+            <ul>
+              <li>Coupons</li>
+              <li>Blog Post</li>
+              <li>Return Policy</li>
+              <li>Join Affiliate</li>
+            </ul>
+          </div>
+          <div class='footer-col-4'>
+            <h3>Follow us</h3>
+            <ul>
+              <li>Facebook</li>
+              <li>Youtube</li>
+              <li>Instagram</li>
+              <li>Twitterr</li>
+            </ul>
+          </div>
+        </div>
+        <hr />
+        <p class='copyright'>Copyright 2022 - BookWorm</p>
+      </div>
+    </div>
+    <!-- ---------Javascript for toggle menu------------- -->
+    <script>
+      var MenuItems = document.getElementById('MenuItems');
+      MenuItems.style.maxHeight = '0px';
+      function menutoggle() {
+        if (MenuItems.style.maxHeight == '0px') {
+          MenuItems.style.maxHeight = '200px';
+        } else {
+          MenuItems.style.maxHeight = '0px';
+        }
+      }
+    </script>
+  </body>
+</html>";
+
+#Close Connection
+mysqli_free_result($result);
+mysqli_close($con);
+?>
