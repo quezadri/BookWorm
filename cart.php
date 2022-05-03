@@ -1,4 +1,6 @@
 <?php
+#Start the session
+session_start();
 echo"
 <html lang='en'>
   <head>
