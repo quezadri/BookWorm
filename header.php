@@ -45,15 +45,30 @@ echo"
   else{
     echo"<li><a id='signIn' class='btn' href='javascript:void(0)'>My Account</a></li>";
   }
-           echo" </ul>
-          </nav>
+
+  echo "</ul></nav>";
+
+  if(!empty($_SESSION["shopping_cart"])) {
+    $cart_count = count(array_keys($_SESSION["shopping_cart"])); 
+           echo"
           <a href='cart.php'>
             <i id='cartIcon' class='fa-solid fa-cart-shopping'></i>
           </a>
-          <span class='badge' id='cartCount'>1</span>
+          <span class='badge' id='cartCount'>$cart_count</span>
           <img src='images/menu.png' class='menu-icon' onclick='menutoggle()' />
         </div>
        ";
+  } else {
+      echo"
+      <a href='cart.php'>
+        <i id='cartIcon' class='fa-solid fa-cart-shopping'></i>
+      </a>
+      <img src='images/menu.png' class='menu-icon' onclick='menutoggle()' />
+    </div>
+  ";
+  }
+
+
 if ($_SESSION['currentPage'] == "https://localhost/BookWorm/index.php") {      
 echo"<div class='row'>
           <div class='col-2'>

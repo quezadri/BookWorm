@@ -1,153 +1,116 @@
 <?php
 #Start the session
 session_start();
-echo"
-<html lang='en'>
-  <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>Cart | BookWorm!</title>
-    <link rel='stylesheet' href='style.css' />
-    <link rel='preconnect' href='https://fonts.gstatic.com' />
-    <link
-      href='https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,400;1,500;1,600&display=swap'
-      rel='stylesheet'/>
-    <link
-      rel='stylesheet'
-      href='https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
-    />
-    <script src='https://kit.fontawesome.com/2496949d98.js' crossorigin='anonymous'></script>
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
-    <script src='script.js'></script>
-  </head>
 
-  <body>
-    <!------------------ Header ------------------>
-    <div class='header'>
-      <div class='container'>
-        <div class='navbar'>
-          <div class='logo'>
-            <a href='index.php'>
-              <img src='images/BookWormLogo.gif' alt='BookWorm-Logo' height='150' width='150'></img>
-            </a>
-          </div>
-          <!----------  Nav Bar ------------------>
-          <nav>
-            <ul id='MenuItems'>
-              <li><a href='index.php'>Home</a></li>
-              <li><a href='ebooks.php'>Books</a></li>
-              <li><a href='subscription.php'>BookWorm Pro</a></li>
-              <li><a href=''>About</a></li>
-              <li><a href=''>Contact</a></li>
-              <li><a id='signIn' class='btn' href='javascript:void(0)'>Sign In</a></li>
-            </ul>
-          </nav>
-          <a href='cart.php'>
-            <i id='cartIcon' class='fa-solid fa-cart-shopping'></i>
-          </a>
-          <span class='badge' id='cartCount'>1</span>
-          <img src='images/menu.png' class='menu-icon' onclick='menutoggle()' />
-        </div>
-      </div>
-    </div>
+$_SESSION['currentPage'] = "https://localhost/BookWorm/cart.php";
 
-    <!--Login modal-->
-    <div id='loginModal' class='modal'>
-      <form class='modal-login animate' action='javascript:void(0)' method='post'>
-        <div class='login-container'>
-          <span onclick='document.getElementById('loginModal').style.display='none'' class='close' title='Close Modal'>&times;</span>
-          <br>
-          <label for='email'><b>Email</b></label>
-          <input type='email' placeholder='Enter Email' id='email' required>
+include "header.php";
 
-          <label for='password'><b>Password</b></label>
-          <input type='password' placeholder='Enter Password' id='password' required>
+if (isset($_POST['action']) && $_POST['action']=="remove"){
+	if(!empty($_SESSION["shopping_cart"])) {
+		foreach($_SESSION["shopping_cart"] as $key => $value) {
+		  if($_POST["code"] == $key){
+		  unset($_SESSION["shopping_cart"][$key]);
+		  $status = "<div class='box' style='color:red;'>
+		  Product is removed from your cart!</div>";
+		  }
+		  if(empty($_SESSION["shopping_cart"]))
+		  unset($_SESSION["shopping_cart"]);
+		  }		
+	}
+}
+	
+if (isset($_POST['action']) && $_POST['action']=="change"){
+	foreach($_SESSION["shopping_cart"] as &$value){
+	if($value['barcode'] === $_POST["code"]){
+		$value['quantity'] = $_POST["quantity"];
+		break; // Stop the loop after we've found the product
+	}
+	}
+}
 
-          <button id='loginbtn' class='btn loginbtn' type='submit'>Login</button>
-        </div>
-      </form>
-    </div>
+echo "<div class='cart'>";
 
-    <!-- ---------- cart items details------------- -->
-    <div class='small-container cart-page'>
-      <table>
-        <tr>
-          <th>Cart</th>
-          <th>Quantity</th>
-          <th>Subtotal</th>
-        </tr>
-        <tr>
-          <td>
-            <div class='cart-info'>
-              <img src='images/Book4.jpeg' alt='Book 4' />
-              <div>
-                <p>Later</p>
-                <small>Price: $9.99</small> <br />
-                <a href=''>Remove</a>
-              </div>
-            </div>
-          </td>
-          <td><input type='number' value='1' /></td>
-          <td>$9.99</td>
-        </tr>
-        </table>
-      </div>
-    </div>
-    <!-- ---------------------footer------------------- -->
-    <div class='footer'>
-      <div class='container'>
-        <div class='row'>
-          <div class='footer-col-1'>
-            <h3>Download Our App</h3>
-            <p>Download App for Android and ios mobile phone.</p>
-            <div class='app-logo'>
-              <img src='images/Playstore.png' />
-              <img src='images/Applestore.png' />
-            </div>
-          </div>
-          <div class='footer-col-2'>
-            <img src='images/BookWormLogo.gif' alt='BookWorm-Logo' height='150' width='50'></img>
-            <p>
-              A Better Way to Buy Books Online!
-            </p>
-          </div>
-          <div class='footer-col-3'>
-            <h3>Useful Links</h3>
-            <ul>
-              <li>Coupons</li>
-              <li>Blog Post</li>
-              <li>Return Policy</li>
-              <li>Join Affiliate</li>
-            </ul>
-          </div>
-          <div class='footer-col-4'>
-            <h3>Follow us</h3>
-            <ul>
-              <li>Facebook</li>
-              <li>Youtube</li>
-              <li>Instagram</li>
-              <li>Twitterr</li>
-            </ul>
-          </div>
-        </div>
-        <hr />
-        <p class='copyright'>Copyright 2022 - BookWorm</p>
-      </div>
-    </div>
-    <!-- ---------Javascript for toggle menu------------- -->
-    <script>
-      var MenuItems = document.getElementById('MenuItems');
-      MenuItems.style.maxHeight = '0px';
-      function menutoggle() {
-        if (MenuItems.style.maxHeight == '0px') {
-          MenuItems.style.maxHeight = '200px';
-        } else {
-          MenuItems.style.maxHeight = '0px';
-        }
-      }
-    </script>
-  </body>
-</html>
+if(isset($_SESSION["shopping_cart"])) {
+    $total_price = 0;
 
-";
+	echo "<table class='table'>
+	<tbody>
+	<tr>
+	<td></td>
+	<td>BOOK TITLE</td>
+	<td>QUANTITY</td>
+	<td>UNIT PRICE</td>
+	<td>ITEMS TOTAL</td>
+	</tr>"; ?>
+	<?php		
+foreach ($_SESSION["shopping_cart"] as $product){
+?>
+<tr>
+<td>
+<?php echo "<img src='data:image/jpeg;base64,".base64_encode($product['image'])."' width='50' height='40' />"?>
+</td>
+<td><?php echo $product["title"]; ?><br />
+<form method='post' action=''>
+<input type='hidden' name='code' value="<?php echo $product["barcode"]; ?>" />
+<input type='hidden' name='action' value="remove" />
+<button type='submit' class='remove'>Remove Item</button>
+</form>
+</td>
+<td>
+<form method='post' action=''>
+<input type='hidden' name='code' value="<?php echo $product["barcode"]; ?>" />
+<input type='hidden' name='action' value="change" />
+<select name='quantity' class='quantity' onChange="this.form.submit()">
+<option <?php if($product["quantity"]==1) echo "selected";?>
+value="1">1</option>
+<option <?php if($product["quantity"]==2) echo "selected";?>
+value="2">2</option>
+<option <?php if($product["quantity"]==3) echo "selected";?>
+value="3">3</option>
+<option <?php if($product["quantity"]==4) echo "selected";?>
+value="4">4</option>
+<option <?php if($product["quantity"]==5) echo "selected";?>
+value="5">5</option>
+</select>
+</form>
+</td>
+<td><?php echo "$".$product["price"]; ?></td>
+<td><?php echo "$".$product["price"]*$product["quantity"]; ?></td>
+</tr>
+<?php
+$total_price += ($product["price"]*$product["quantity"]);
+}
+?>
+<tr>
+<td colspan="5" align="right">
+<strong>TOTAL: <?php echo "$".$total_price; ?></strong>
+</td>
+</tr>
+</tbody>
+</table>
+<a id='checkout' class='btn' onClick='alert("Your purchase was successful!")'>Checkout</a>
+  <?php
+}else{
+	echo "<h3>Your cart is empty!</h3>";
+	}
+?>
+</div>
+
+<div style="clear:both;"></div>
+
+<div class="message_box" style="margin:10px 0px;">
+<?php 
+
+if (isset($status)) {
+	echo $status; 
+} else {
+	echo "";
+}
+
+?>
+</div>
+<?php
+
+include "footer.php";
 	?>
