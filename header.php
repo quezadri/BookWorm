@@ -95,6 +95,23 @@ echo"
           <input type='password' placeholder='Enter Password' id='password' name='password' required>
 
           <button id='loginbtn' class='btn loginbtn' type='submit' formaction='login.php'>Login</button>
+          <br>
+          <label for='signup'>Don't have an account? Sign up for one <a href = 'https://localhost/BookWorm/signup.php' style='color:#ff523b;font-size:20px;font: 'Poppins'>here!</a></label>
+        </div>
+      </form>
+    </div> ";
+}
+else{
+	echo"
+    <!--Login modal-->
+    <div id='loginModal' class='modal'>
+      <form class='modal-login animate' action='javascript:void(0)' method='post'>
+        <div class='login-container'>
+          <span onclick=document.getElementById('loginModal').style.display='none' class='close' title='Close Modal'>&times;</span>
+          <br>
+          <label><b>Options</b></label>
+          <button id='loginbtn' class='btn loginbtn' type='submit' formaction='logout.php'>Logout</button>
+          <br>
         </div>
       </form>
     </div> ";

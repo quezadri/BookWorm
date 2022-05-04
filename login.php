@@ -27,15 +27,21 @@ if($result){
 				$_SESSION['customerID'] = $cid;
 				echo "<br> Login Successful";
 				header("Location: $page");
+				#Close Connection
+				mysqli_free_result($result);
+				mysqli_close($con);
 				exit();
 
-}}}
+}
 else {echo "<br> Login Failed";
 				$_SESSION['loginError'] = True;
 				header("Location: $page");
+				#Close Connection
+				mysqli_free_result($result);
+				mysqli_close($con);
 				exit();
 			}
-}
+}}}
 
 #Close Connection
 mysqli_free_result($result);
